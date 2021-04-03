@@ -6,6 +6,8 @@ import faust
 
 logger = logging.getLogger(__name__)
 
+CONNECTOR_TOPIC = "connector.stations"
+CHANGELOG_TOPIC = "org.chicago.cta.stations.table.v1"
 
 # Faust will ingest records from Kafka in this format
 class Station(faust.Record):
@@ -33,9 +35,9 @@ class TransformedStation(faust.Record):
 #   places it into a new topic with only the necessary information.
 app = faust.App("stations-stream", broker="kafka://localhost:9092", store="memory://")
 # TODO: Define the input Kafka Topic. Hint: What topic did Kafka Connect output to?
-topic = app.topic("stations", value_type=Station)
+topic = app.topic(CONNECTOR_TOPIC, value_type=Station, partitions = 1)
 # TODO: Define the output Kafka Topic
-out_topic = app.topic("transformed.stations", partitions=1)
+out_topic = app.topic(CHANGELOG_TOPIC, partitions=1)
 # TODO: Define a Faust Table
 table = app.Table(
    "station_table",
@@ -66,10 +68,10 @@ async def transform(stations):
         table[station.station_name] = TransformedStation(
             station.station_id,
             station.station_name,
-            station.station_order,
+            station.order,
             line,
         )
-        logger.info(f"{station.station_name}: {table[station.station_name].current()}")
+        logger.info(f"{station.station_name}: {table[station.station_name]}")
 
 
 if __name__ == "__main__":

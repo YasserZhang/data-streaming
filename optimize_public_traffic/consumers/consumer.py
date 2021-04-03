@@ -62,7 +62,7 @@ class KafkaConsumer:
         # how the `on_assign` callback should be invoked.
         #
         #
-        self.consumer.subscribe([self.topic_name_pattern], on_assign=self.message_handler)
+        self.consumer.subscribe([self.topic_name_pattern], on_assign=self.on_assign)
 
     def on_assign(self, consumer, partitions):
         """Callback for when topic assignment takes place"""
@@ -102,6 +102,7 @@ class KafkaConsumer:
             elif message.error() is not None:
                 print(f"error from message: {message.error()}")
             else:
+                self.message_handler(message)
                 print(f"consumed message: {message.key()} : {message.value()}")
         if len(messages) > 0:
             return 1

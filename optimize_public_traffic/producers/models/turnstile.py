@@ -56,8 +56,8 @@ class Turnstile(Producer):
         #
         logging.info(f"getting entries at {self.station.name} at {time_step} steps of {timestamp}")
         num_entries = self.turnstile_hardware.get_entries(timestamp, time_step)
-        logging.info(f"num_entries: {num_entries}")
-        logging.info(f"topic_name: {self.topic_name}")
+        logging.debug(f"num_entries: {num_entries}")
+        logging.debug(f"topic_name: {self.topic_name}")
         for _ in range(num_entries):
             self.producer.produce(
                topic=self.topic_name,

@@ -27,12 +27,13 @@ CREATE TABLE turnstile (
     station_name varchar,
     line varchar
 ) WITH (
-    KAFKA_TOPIC='turnstile',
+    KAFKA_TOPIC='org.chicago.cta.turnstiles',
     VALUE_FORMAT='AVRO',
-    KEY='org.chicago.cta.turnstiles'
+    KEY='station_id'
 );
 
 CREATE TABLE turnstile_summary
+WITH (VALUE_FORMAT='JSON')
 AS
     SELECT station_id, count(station_id) as COUNT
     FROM turnstile
@@ -57,9 +58,14 @@ def execute_statement():
             }
         ),
     )
-
     # Ensure that a 2XX status code was returned
-    resp.raise_for_status()
+    try:
+        resp.raise_for_status()
+    except:
+        print(
+            f"Failed to create REST proxy consumer: {json.dumps(resp.json(), indent=2)}"
+        )
+        return
 
 
 if __name__ == "__main__":

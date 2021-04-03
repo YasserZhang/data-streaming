@@ -63,21 +63,19 @@ def configure_connector():
                # TODO
                "incrementing.column.name": "stop_id",
                # TODO
-               "topic.prefix": "org.chicago.cta",
+               "topic.prefix": "connector.",
                # TODO
                "poll.interval.ms": "500",
            }
        }),
     )
-
     # Ensure a healthy response was given
     try:
         resp.raise_for_status()
+        logging.info("connector created successfully")
     except Exception as e:
         logging.critical(f"Failed to send data to Kafka Connector: {json.dumps(resp.json(), indent=2)}")
         logging.error(e)
-    logging.info("connector created successfully")
-
 
 if __name__ == "__main__":
     configure_connector()
