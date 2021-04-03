@@ -19,10 +19,10 @@ class Station(Producer):
     #
     # TODO: Define this value schema in `schemas/station_value.json, then uncomment the below
     #
-
+    
     print(f"{Path(__file__).parents[0]}/schemas/arrival_value.json \n\n")
     value_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/arrival_value.json")
-
+    
     print(value_schema)
 
     def __init__(self, station_id, name, color, direction_a=None, direction_b=None):
@@ -69,7 +69,7 @@ class Station(Producer):
            topic=self.topic_name,
            key={"timestamp": self.time_millis()},
            value={
-            "station_id":self.station_id,
+            "station_id": self.station_id,
             "train_id": train.train_id,
             "direction": direction,
             "line": self.color.name,

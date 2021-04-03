@@ -21,7 +21,7 @@ class Weather(Producer):
         "status", "sunny partly_cloudy cloudy windy precipitation", start=0
     )
 
-    rest_proxy_url = "http://0.0.0.0:8082"
+    rest_proxy_url = "http://localhost:8082"
 
     key_schema = None
     value_schema = None
@@ -100,15 +100,15 @@ class Weather(Producer):
                    # TODO: Provide key schema, value schema, and records
                    #
                    #
-                   "key_schema": Weather.key_schema,
-                   "value_schema": Weather.value_schema,
+                   "key_schema": json.dumps(Weather.key_schema),
+                   "value_schema": json.dumps(Weather.value_schema),
                    "records": [
-                       {"key": {"timestamp": self.time_millis()},
-                        "value": {"temperature": self.temp,
+                       {"key": {"timestamp": self.time_millis()}, 
+                        "value": {"temperature": int(self.temp), 
                                   "status": self.status.name}}]
                }
            ),
-
+           
         )
         try:
             resp.raise_for_status()

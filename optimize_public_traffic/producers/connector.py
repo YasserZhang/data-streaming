@@ -1,12 +1,24 @@
 """Configures a Kafka Connector for Postgres Station data"""
 import json
 import logging
-
+import sys
 import requests
 
-
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+
+# root = logging.getLogger()
+# root.setLevel(logging.DEBUG)
+
+# handler = logging.StreamHandler(sys.stdout)
+# handler.setLevel(logging.DEBUG)
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# handler.setFormatter(formatter)
+# root.addHandler(handler)
 
 KAFKA_CONNECT_URL = "http://localhost:8083/connectors"
 CONNECTOR_NAME = "stations"
@@ -14,11 +26,10 @@ CONNECTOR_NAME = "stations"
 
 def configure_connector():
     """Starts and configures the Kafka Connect connector"""
-    logging.debug("creating or updating kafka connect connector...")
-
+    logger.info("creating or updating kafka connect connector...")
     resp = requests.get(f"{KAFKA_CONNECT_URL}/{CONNECTOR_NAME}")
     if resp.status_code == 200:
-        logging.debug("connector already created skipping recreation")
+        logger.info("connector already created skipping recreation")
         return
 
     # TODO: Complete the Kafka Connect Config below.
@@ -26,7 +37,7 @@ def configure_connector():
     # using incrementing mode, with `stop_id` as the incrementing column name.
     # Make sure to think about what an appropriate topic prefix would be, and how frequently Kafka
     # Connect should run this connector (hint: not very often!)
-    logger.info("connector code not completed skipping connector creation")
+    # logger.info("connector code not completed skipping connector creation")
     resp = requests.post(
        KAFKA_CONNECT_URL,
        headers={"Content-Type": "application/json"},
@@ -65,7 +76,7 @@ def configure_connector():
     except Exception as e:
         logging.critical(f"Failed to send data to Kafka Connector: {json.dumps(resp.json(), indent=2)}")
         logging.error(e)
-    logging.debug("connector created successfully")
+    logging.info("connector created successfully")
 
 
 if __name__ == "__main__":

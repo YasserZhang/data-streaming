@@ -11,6 +11,7 @@ from tornado import gen
 logger = logging.getLogger(__name__)
 BROKER_URL = "PLAINTEXT://localhost:9092"
 
+
 class KafkaConsumer:
     """Defines the base kafka consumer class"""
 
@@ -41,7 +42,7 @@ class KafkaConsumer:
                 # TODO
                 #
                 "bootstrap.servers": BROKER_URL,
-                "group.id": "0",
+                "group.id": "udacity.data.streaming.test",
         }
         if self.offset_earliest:
             self.broker_properties["auto.offset.reset"] = "earliest"
