@@ -99,6 +99,7 @@ class Line:
             curr_index, b_direction = self._get_next_idx(
                 curr_index, b_direction, step_size=1
             )
+            logger.debug(f"advancing train: {self.stations[curr_index]}")
             if b_direction is True:
                 self.stations[curr_index].arrive_b(curr_train, prev_station, prev_dir)
             else:

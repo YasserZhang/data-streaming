@@ -35,6 +35,7 @@ class Line:
     def _handle_arrival(self, message):
         """Updates train locations"""
         value = message.value()
+        logger.info(f"arrival message: {value}")
         prev_station_id = value.get("prev_station_id")
         prev_dir = value.get("prev_direction")
         if prev_dir is not None and prev_station_id is not None:

@@ -7,7 +7,6 @@ from confluent_kafka import avro
 from models import Turnstile
 from models.producer import Producer
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -19,20 +18,20 @@ class Station(Producer):
     #
     # TODO: Define this value schema in `schemas/station_value.json, then uncomment the below
     #
-    
+
     print(f"{Path(__file__).parents[0]}/schemas/arrival_value.json \n\n")
     value_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/arrival_value.json")
-    
+
     print(value_schema)
 
     def __init__(self, station_id, name, color, direction_a=None, direction_b=None):
         self.name = name
         self.station_name = (
             self.name.lower()
-            .replace("/", "_and_")
-            .replace(" ", "_")
-            .replace("-", "_")
-            .replace("'", "")
+                .replace("/", "_and_")
+                .replace(" ", "_")
+                .replace("-", "_")
+                .replace("'", "")
         )
 
         #
@@ -43,7 +42,7 @@ class Station(Producer):
         #
         # topic_name =  # TODO: Come up with a better topic name
         super().__init__(
-            topic_name = f"org.chicago.cta.station.arrivals.{self.station_name}",
+            topic_name=f"org.chicago.cta.station.arrivals.{self.station_name}",
             key_schema=Station.key_schema,
             value_schema=Station.value_schema,
         )
@@ -64,19 +63,20 @@ class Station(Producer):
         #
         #
         # logger.info("arrival kafka integration incomplete - skipping")
-        logger.debug("Station run function working")
+        logger.info("Station run function working")
+        logger.info(f"produce on topic {self.topic_name}...")
         self.producer.produce(
-           topic=self.topic_name,
-           key={"timestamp": self.time_millis()},
-           value={
-            "station_id": self.station_id,
-            "train_id": train.train_id,
-            "direction": direction,
-            "line": self.color.name,
-            "train_status": train.status.name,
-            "prev_station_id": prev_station_id,
-            "prev_direction": prev_direction
-           },
+            topic=self.topic_name,
+            key={"timestamp": self.time_millis()},
+            value={
+                "station_id": self.station_id,
+                "train_id": train.train_id,
+                "direction": direction,
+                "line": self.color.name,
+                "train_status": train.status.name,
+                "prev_station_id": prev_station_id,
+                "prev_direction": prev_direction
+            },
         )
 
     def __str__(self):

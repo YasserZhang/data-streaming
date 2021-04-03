@@ -54,7 +54,7 @@ class Producer:
         # TODO: Configure the AvroProducer
 
         self.producer = AvroProducer({'bootstrap.servers': BROKER_URL,
-                                      'client.id': 'project1',
+                                      'client.id': f'producer_{self.topic_name}',
                                       'schema.registry.url': SCHEMA_REGISTRY_URL,
                                       },
                                      default_key_schema=self.key_schema,
@@ -82,14 +82,9 @@ class Producer:
             for topic, future in futures.items():
                 try:
                     future.result()
-                    print("topic created")
+                    logger.debug(f"topic {topic} created")
                 except Exception as e:
-                    print(f"failed to create topic {topic}: {e}")
-
-        # logger.info("topic creation kafka integration incomplete - skipping")
-
-    def time_millis(self):
-        return int(round(time.time() * 1000))
+                    logger.error(f"failed to create topic {topic}: {e}")
 
     def close(self):
         """Prepares the producer for exit by cleaning up the producer"""
@@ -99,7 +94,7 @@ class Producer:
         #
         #
         self.producer.flush()
-        # self.producer.close() why don't have to close?
+        self.producer.close()
         # logger.info("producer close incomplete - skipping")
 
     def time_millis(self):

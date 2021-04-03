@@ -7,19 +7,17 @@ import tornado.ioloop
 import tornado.template
 import tornado.web
 
-
 # Import logging before models to ensure configuration is picked up
 logging.config.fileConfig(f"{Path(__file__).parents[0]}/logging.ini")
-
 
 from consumer import KafkaConsumer
 from models import Lines, Weather
 import topic_check
 
-
 logger = logging.getLogger(__name__)
 WEB_SERVER_PORT = 8889
 FAUSTO_CHANGELOG_TOPIC = "org.chicago.cta.stations.table.v1"
+
 
 class MainHandler(tornado.web.RequestHandler):
     """Defines a web request handler class"""
@@ -79,6 +77,7 @@ def run_server():
             "(\w*|\.)*station.arrivals.(.(\w*|\.))*",
             lines.process_message,
             offset_earliest=True,
+            is_avro=True,
         ),
         KafkaConsumer(
             "TURNSTILE_SUMMARY",
